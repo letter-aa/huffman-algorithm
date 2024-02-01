@@ -73,6 +73,7 @@ int main() {
     for (int i = 0; i < aa.size; i++) {
         printf("%c: %d\n", aa.freqs[i].character, aa.freqs[i].frequency);
     }
+    newline;
     //Node* nodes = malloc(aa.size * sizeof(Node*));
     Node* priQuene = malloc(aa.size * sizeof(Node)); //priority quene
     Node main = { 0 };
@@ -85,8 +86,18 @@ int main() {
     }
     */
 
-    int sizeEx = aa.size;
+    for (int i = 0; i < aa.size - (aa.size % 2); i += 2) {
+        //printf("%c\n", aa.freqs[i].character);
+        //printf("%c\n", aa.freqs[i + 1].character);
+        Node* new = newnode('\0', 0);
+        Node* new1 = newnode(aa.freqs[i].character, aa.freqs[i].frequency);
+        Node* new2 = newnode(aa.freqs[i + 1].character, aa.freqs[i + 1].frequency);
+        as(new, new1, new2);
+        priQuene[j] = *new;
+        j++;
+    }
 
+   /*
     while (sizeEx > 0) {
         for (int i = 0; i < sizeEx - (sizeEx % 2); i += 2) {
             printf("%c\n", aa.freqs[i].character);
@@ -97,27 +108,32 @@ int main() {
             as(new, new1, new2);
             priQuene[j] = *new;
             j++;
+            printf("%c, %c, %d\n", aa.freqs[i].character, aa.freqs[i + 1].character, i);
         }
         sizeEx = sizeEx - (sizeEx % 2);
         sizeEx = sizeEx / 2;
         //j = 0;
         //f++;
     }
+   */
     if (aa.size % 2) { // if odd number of nodes - aa.size
         priQuene[j] = *newnode(aa.freqs[aa.size - 1].character, aa.freqs[aa.size - 1].frequency); // + (aa.size > 1)
         j++;
     }
 
-    printf("%d\n", j);
+    //printf("%d\n", j);
 
     sortnodes(priQuene, j);
 
     ppq(priQuene, j);
 
+    /*
     newline;
     newline;
     newline;
     for (int i = 0; i < aa.size; i++) {
         printf("%c\n%d\n\n", aa.freqs[i].character, aa.freqs[i].frequency);
     }
+    */
+    free(priQuene);
 }
