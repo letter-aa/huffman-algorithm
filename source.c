@@ -5,6 +5,7 @@
 #include <math.h>
 #include "coolCFuncs.h"
 #define newline printf("\n")
+#define DEBUG_NULL 0xcdcdcdcdcdcdcdcd
 
 typedef struct Node {
     char c;
@@ -13,27 +14,31 @@ typedef struct Node {
     struct Node* right;
 } Node;
 
+void ppn(Node node, int nth) {
+    printf("Node %d:\n", nth);
+    printf("  Character: %c\n", node.c);
+    printf("  Frequency: %d\n", node.f);
+    if (node.left != NULL && node.left != DEBUG_NULL) { // 0xcdcdcdcdcdcdcdcd
+        printf("  Left Child:\n");
+        printf("    Character: %c\n", node.left->c);
+        printf("    Frequency: %d\n", node.left->f);
+    }
+    if (node.right != NULL && node.right != DEBUG_NULL) { // 0xcdcdcdcdcdcdcdcd
+        printf("  Right Child:\n");
+        printf("    Character: %c\n", node.right->c);
+        printf("    Frequency: %d\n", node.right->f);
+    }
+    newline;
+}
+
 void ppq(Node* priQuene, int size) { // print priority quene
     for (int i = 0; i < size; i++) {
-        printf("Node %d:\n", i + 1);
-        printf("  Character: %c\n", priQuene[i].c);
-        printf("  Frequency: %d\n", priQuene[i].f);
-        if (priQuene[i].left != NULL && priQuene[i].left != 0xcdcdcdcdcdcdcdcd) {
-            printf("  Left Child:\n");
-            printf("    Character: %c\n", priQuene[i].left->c);
-            printf("    Frequency: %d\n", priQuene[i].left->f);
-        }
-        if (priQuene[i].right != NULL && priQuene[i].right != 0xcdcdcdcdcdcdcdcd) {
-            printf("  Right Child:\n");
-            printf("    Character: %c\n", priQuene[i].right->c);
-            printf("    Frequency: %d\n", priQuene[i].right->f);
-        }
-        newline;
+        ppn(priQuene[i], i + 1);
     }
 }
 
-void asf(Node* pMain, Node* l, Node* r) {
-    pMain->f = pMain->right->f + pMain->left->f;
+void asf(Node* pMain) { // Node* l, Node* r
+    pMain->f = pMain->right->f + pMain->left->f; // pMain->f = l->f + r->f;
 }
 
 void asl(Node* pMain, Node* l) {
@@ -77,6 +82,11 @@ int main() {
     }
     newline;
     Node* priQuene = malloc(aa.size * sizeof(Node)); //priority quene
+    /*
+    for (int i = 0; i < aa.size; i++) {
+        priQuene[i] = *newnode(aa.freqs[i].character, aa.freqs[i].frequency);
+    }
+    */
     Node main = { 0 };
 
     for (int i = 0; i < aa.size; i += 2) {
@@ -84,7 +94,7 @@ int main() {
         if (i + 1 < aa.size) {
             asl(new, &aa.freqs[i]);
             asr(new, &aa.freqs[i + 1]);
-            asf(new, &aa.freqs[i], &aa.freqs[i + 1]);
+            asf(new);
         }
         else {
             new->c = aa.freqs[i].character;
@@ -92,6 +102,49 @@ int main() {
         }
         priQuene[j] = *new;
         j++;
+    }
+    /*
+    while (j > 1) {
+        for (int i = 0; i < j; i += 2) {
+            Node* new = newnode('\0', 0);
+            if (i + 1 < j) {
+                asl(new, &priQuene[0]);
+                asr(new, &priQuene[1]);
+                asf(new, &priQuene[0], &priQuene[1]);
+            }
+            else {
+                new->c = priQuene[0].c;
+                new->f = priQuene[0].f;
+            }
+            priQuene[0] = *new;
+            for (int i = 1; i < j - 1; i++) {
+                priQuene[i] = priQuene[i + 1];
+            }
+        }
+        j--;
+        sortnodes(priQuene, j);
+    }
+    */
+    for (int i = j; i > 0; i--) {
+        priQuene[i] = priQuene[i - 1];
+    }
+    while (j > 1) {
+        sortnodes(priQuene, j);
+        Node* new = newnode('\0', 0);
+        asl(new, &priQuene[1]);
+        asr(new, &priQuene[2]);
+        asf(new);
+        ppn(priQuene[0], 0);
+        ppn(priQuene[1], 1);
+        ppn(priQuene[2], 2);
+        //ppn(priQuene[3], j);
+        priQuene[0] = *new;
+        for (int i = 1; i < j - 1; i++) {
+            priQuene[i] = priQuene[i + 1];
+        }
+        ppn(priQuene[0], 0);
+        printf("%d\n", j);
+        j--;
     }
     sortnodes(priQuene, j);
     ppq(priQuene, j);
