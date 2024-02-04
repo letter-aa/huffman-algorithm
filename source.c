@@ -125,28 +125,34 @@ int main() {
         sortnodes(priQuene, j);
     }
     */
+    /*
     for (int i = j; i > 0; i--) {
         priQuene[i] = priQuene[i - 1];
+        ppn(priQuene[i], i);
     }
+    */
     while (j > 1) {
         sortnodes(priQuene, j);
         Node* new = newnode('\0', 0);
-        asl(new, &priQuene[1]);
-        asr(new, &priQuene[2]);
+        asl(new, &priQuene[0]);
+        // if (&priQuene[2] != NULL) else get 0 and 1 of priquene element
+        asr(new, &priQuene[1]);
         asf(new);
+        /*
         ppn(priQuene[0], 0);
         ppn(priQuene[1], 1);
         ppn(priQuene[2], 2);
+        */
         //ppn(priQuene[3], j);
-        priQuene[0] = *new;
+        main = *new;
         for (int i = 1; i < j - 1; i++) {
             priQuene[i] = priQuene[i + 1];
         }
-        ppn(priQuene[0], 0);
-        printf("%d\n", j);
+        //ppn(main, 0);
+        //printf("%d\n", j);
         j--;
     }
     sortnodes(priQuene, j);
-    ppq(priQuene, j);
+    ppn((main.left != NULL && main.right != NULL) ? main : priQuene[0], 1);
     free(priQuene);
 }
