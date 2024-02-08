@@ -8,7 +8,7 @@
 #define DEBUG_NULL 0xcdcdcdcdcdcdcdcd
 
 typedef struct Node {
-    char c;
+    char c; //characters
     int f; //frequencies
     struct Node* left;
     struct Node* right;
@@ -74,18 +74,9 @@ Node* fton(frequency freq) { // frequency to node
     return newnode(freq.character, freq.frequency);
 }
 
-int main() {
-    int f = 0;
-    char* ipt = input();
-    frequencies aa = getfrequencies(ipt);
-    newline;
-    sortfrequencies(&aa);
+Node build(frequencies freq) {
     int j = 0;
-    for (int i = 0; i < aa.size; i++) {
-        printf("%c: %d\n", aa.freqs[i].character, aa.freqs[i].frequency);
-    }
-    newline;
-    Node* priQuene = malloc(aa.size * sizeof(Node)); //priority quene
+    Node* priQuene = malloc(freq.size * sizeof(Node)); //priority quene
     /*
     for (int i = 0; i < aa.size; i++) {
         priQuene[i] = *newnode(aa.freqs[i].character, aa.freqs[i].frequency);
@@ -93,51 +84,24 @@ int main() {
     */
     Node main = { 0 };
 
-    for (int i = 0; i < aa.size; i += 2) {
+    for (int i = 0; i < freq.size; i += 2) {
         Node* new = newnode('\0', 0);
-        if (i + 1 < aa.size) {
-            asl(new, fton(aa.freqs[i]));
-            asr(new, fton(aa.freqs[i + 1]));
+        if (i + 1 < freq.size) {
+            asl(new, fton(freq.freqs[i]));
+            asr(new, fton(freq.freqs[i + 1]));
             asf(new);
         }
         else {
-            new = fton(aa.freqs[i]);
+            new = fton(freq.freqs[i]);
         }
         priQuene[j] = *new;
         j++;
     }
-    /*
-    while (j > 1) {
-        for (int i = 0; i < j; i += 2) {
-            Node* new = newnode('\0', 0);
-            if (i + 1 < j) {
-                asl(new, &priQuene[0]);
-                asr(new, &priQuene[1]);
-                asf(new, &priQuene[0], &priQuene[1]);
-            }
-            else {
-                new->c = priQuene[0].c;
-                new->f = priQuene[0].f;
-            }
-            priQuene[0] = *new;
-            for (int i = 1; i < j - 1; i++) {
-                priQuene[i] = priQuene[i + 1];
-            }
-        }
-        j--;
-        sortnodes(priQuene, j);
-    }
-    */
-    /*
-    for (int i = j; i > 0; i--) {
-        priQuene[i] = priQuene[i - 1];
-        ppn(priQuene[i], i);
-    }
-    */
+
     while (j > 1) {
         sortnodes(priQuene, j);
         Node* new = newnode('\0', 0);
-        ppn(priQuene[0],0);
+        ppn(priQuene[0], 0);
         ppn(priQuene[1], 1);
         Node* ex = newnode(priQuene[0].c, priQuene[0].f);
         Node* ex1 = newnode(priQuene[1].c, priQuene[1].f);
@@ -145,26 +109,27 @@ int main() {
         asr(ex, priQuene[0].right);
         asl(ex1, priQuene[1].left);
         asr(ex1, priQuene[1].right);
-        ppn(*ex, 0);
-        ppn(*ex1, 1);
         asl(new, ex);
-        // if (&priQuene[2] != NULL) else get 0 and 1 of priquene element
         asr(new, ex1);
         asf(new);
-        //ppn(priQuene[0], 0);
-        //ppn(priQuene[1], 1);
-        //
-        // ppn(priQuene[2], 2);
-        //ppn(priQuene[3], j);
         priQuene[0] = *new;
         for (int i = 1; i < j - 1; i++) {
             priQuene[i] = priQuene[i + 1];
         }
-        //ppn(main, 0);
-        //printf("%d\n", j);
         j--;
     }
     sortnodes(priQuene, j);
-    ppn((main.left != NULL && main.right != NULL) ? main : priQuene[0], 1);
-    free(priQuene);
+    return priQuene[0];
+}
+
+int main() {
+    char* ipt = input();
+    frequencies aa = getfrequencies(ipt);
+    newline;
+    sortfrequencies(&aa);
+    for (int i = 0; i < aa.size; i++) {
+        printf("%c: %d\n", aa.freqs[i].character, aa.freqs[i].frequency);
+    }
+    newline;
+    ppn(build(aa), 0);
 }
